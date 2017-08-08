@@ -27,6 +27,20 @@ input_area new_input_area(point_2d point, point_2d point_2)
     return new_input_area(point.x, point.y, point_2.x - point.x, point_2.y - point.y);
 }
 
+input_circle_area new_input_circle_area(double position_x, double position_y, double radius)
+{
+    input_circle_area result;
+    result.position_x = position_x;
+    result.position_y = position_y;
+    result.radius = radius;
+    return result;
+}
+
+input_circle_area new_input_circle_area(point_2d point, double radius)
+{
+    return new_input_circle_area(point.x, point.y, radius);
+}
+
 input_font new_input_font(string font_name, double font_size, color font_color)
 {
     input_font result;
@@ -930,7 +944,7 @@ void draw_checkbox(checkbox checkbox_to_draw)
 {
     fill_rectangle(checkbox_to_draw.border.border_color, checkbox_to_draw.area.position_x, checkbox_to_draw.area.position_y, checkbox_to_draw.area.width, checkbox_to_draw.area.height);
     fill_rectangle(checkbox_to_draw.background_color, checkbox_to_draw.area.position_x + checkbox_to_draw.border.border_width, checkbox_to_draw.area.position_y + checkbox_to_draw.border.border_width, checkbox_to_draw.area.width - checkbox_to_draw.border.border_width * 2, checkbox_to_draw.area.height - checkbox_to_draw.border.border_width * 2);
-    draw_text(checkbox_to_draw.label, checkbox_to_draw.style.font_color, checkbox_to_draw.style.font_name, checkbox_to_draw.style.font_size, checkbox_to_draw.area.position_x + checkbox_to_draw.area.width + text_width("W", checkbox_to_draw.style.font_name, checkbox_to_draw.style.font_size), checkbox_to_draw.area.position_y - text_height("a", checkbox_to_draw.style.font_name, checkbox_to_draw.style.font_size) / 4);
+    draw_text(checkbox_to_draw.label, checkbox_to_draw.style.font_color, checkbox_to_draw.style.font_name, checkbox_to_draw.style.font_size, checkbox_to_draw.area.position_x + checkbox_to_draw.area.width + text_width("W", checkbox_to_draw.style.font_name, checkbox_to_draw.style.font_size), checkbox_to_draw.area.position_y - text_height("a", checkbox_to_draw.style.font_name, checkbox_to_draw.style.font_size) / 2);
     if (checkbox_to_draw.checked)
     {
         fill_rectangle(checkbox_to_draw.border.border_selected_color, checkbox_to_draw.area.position_x + checkbox_to_draw.border.border_width * 2, checkbox_to_draw.area.position_y + checkbox_to_draw.border.border_width * 2, checkbox_to_draw.area.width - checkbox_to_draw.border.border_width * 4, checkbox_to_draw.area.height - checkbox_to_draw.border.border_width * 4);
@@ -955,6 +969,104 @@ void update_checkbox(checkbox &checkbox_to_update)
 void clear_checkbox(checkbox &checkbox_to_clear)
 {
     checkbox_to_clear.checked = false;
+}
+
+radio new_radio(string name, string label, input_circle_area area, input_font style, input_border border, color background_color)
+{
+    radio result;
+    result.name = name;
+    result.label = label;
+    result.area = area;
+    result.style = style;
+    result.border = border;
+    result.background_color = background_color;
+    return result;
+}
+
+radio new_radio(string name, string label, input_circle_area area, input_font style, input_border border)
+{
+    return new_radio(name, label, area, style, border, COLOR_LIGHT_GRAY);
+}
+
+radio new_radio(string name, string label, input_circle_area area, input_font style, color background_color)
+{
+    return new_radio(name, label, area, style, new_input_border(COLOR_BLACK, 2, COLOR_BLACK), background_color);
+}
+
+radio new_radio(string name, string label, input_circle_area area, input_font style)
+{
+    return new_radio(name, label, area, style, new_input_border(COLOR_BLACK, 2, COLOR_BLACK), COLOR_LIGHT_GRAY);
+}
+
+void draw_radio(radio radio_to_draw, bool is_checked)
+{
+    fill_circle(radio_to_draw.border.border_color, radio_to_draw.area.position_x, radio_to_draw.area.position_y, radio_to_draw.area.radius);
+    fill_circle(radio_to_draw.background_color, radio_to_draw.area.position_x, radio_to_draw.area.position_y, radio_to_draw.area.radius - radio_to_draw.border.border_width);
+    draw_text(radio_to_draw.label, radio_to_draw.style.font_color, radio_to_draw.style.font_name, radio_to_draw.style.font_size, radio_to_draw.area.position_x + radio_to_draw.area.radius + text_width("W", radio_to_draw.style.font_name, radio_to_draw.style.font_size), radio_to_draw.area.position_y - text_height("a", radio_to_draw.style.font_name, radio_to_draw.style.font_size) / 2);
+    if (is_checked)
+    {
+        fill_circle(radio_to_draw.border.border_selected_color, radio_to_draw.area.position_x, radio_to_draw.area.position_y, radio_to_draw.area.radius - radio_to_draw.border.border_width * 2);
+    }
+}
+
+bool radio_clicked(radio radio_to_check)
+{
+    if(mouse_clicked(LEFT_BUTTON) && (mouse_x() > radio_to_check.area.position_x - radio_to_check.area.radius) && (mouse_x() < radio_to_check.area.position_x + radio_to_check.area.radius) && (mouse_y() > radio_to_check.area.position_y - radio_to_check.area.radius) && (mouse_y() < radio_to_check.area.position_y + radio_to_check.area.radius))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+radio_group new_radio_group(string name, int checked_radio, vector<radio> radio_buttons)
+{
+    radio_group result;
+    result.name = name;
+    result.checked_radio = checked_radio;
+    result.radio_buttons = radio_buttons;
+    return result;
+}
+
+radio_group new_radio_group(string name, vector<radio> radio_buttons)
+{
+    return new_radio_group(name, 0, radio_buttons);
+}
+
+void draw_radio_group(radio_group group_to_draw)
+{
+    int index = group_to_draw.checked_radio;
+    for (int i = 0; i < group_to_draw.radio_buttons.size(); i++)
+    {
+        if (i == index)
+        {
+            draw_radio(group_to_draw.radio_buttons[i], true);
+        }
+        else
+        {
+            draw_radio(group_to_draw.radio_buttons[i], false);
+        }
+    }
+}
+
+void update_radio_group(radio_group &group_to_update)
+{
+    int index = group_to_update.checked_radio;
+    for (int i = 0; i < group_to_update.radio_buttons.size(); i++)
+    {
+        if (radio_clicked(group_to_update.radio_buttons[i]))
+        {
+            index = i;
+        }
+    }
+    group_to_update.checked_radio = index;
+}
+
+void clear_radio_group(radio_group &group_to_clear)
+{
+    group_to_clear.checked_radio = 0;
 }
 
 button new_button(string name, string text, input_area area, input_font style, input_border border, color background_color, form_action action)
@@ -1041,6 +1153,10 @@ void draw_form(form form_to_draw)
     {
         draw_checkbox(checkbox_to_draw);
     }
+    for (radio_group group_to_draw : form_to_draw.radio_groups)
+    {
+        draw_radio_group(group_to_draw);
+    }
     for (button button_to_draw : form_to_draw.buttons)
     {
         draw_button(button_to_draw);
@@ -1051,6 +1167,7 @@ void clear_form(form &form_to_clear)
 {
     textbox textbox_to_clear;
     checkbox checkbox_to_clear;
+    radio_group group_to_clear;
     for (int i = 0; i < form_to_clear.textboxes.size(); i++)
     {
         textbox_to_clear = form_to_clear.textboxes[i];
@@ -1063,6 +1180,12 @@ void clear_form(form &form_to_clear)
         clear_checkbox(checkbox_to_clear);
         form_to_clear.checkboxes[j] = checkbox_to_clear;
     }
+    for (int k = 0; k < form_to_clear.radio_groups.size(); k++)
+    {
+        group_to_clear = form_to_clear.radio_groups[k];
+        clear_radio_group(group_to_clear);
+        form_to_clear.radio_groups[k] = group_to_clear;
+    }
 }
 
 void update_form(form &form_to_update)
@@ -1070,6 +1193,7 @@ void update_form(form &form_to_update)
     textbox textbox_to_update;
     button button_to_check;
     checkbox checkbox_to_update;
+    radio_group radio_group_to_update;
     for (int i = 0; i < form_to_update.textboxes.size(); i++)
     {
         textbox_to_update = form_to_update.textboxes[i];
@@ -1081,6 +1205,12 @@ void update_form(form &form_to_update)
         checkbox_to_update = form_to_update.checkboxes[k];
         update_checkbox(checkbox_to_update);
         form_to_update.checkboxes[k] = checkbox_to_update;
+    }
+    for (int l = 0; l < form_to_update.radio_groups.size(); l++)
+    {
+        radio_group_to_update = form_to_update.radio_groups[l];
+        update_radio_group(radio_group_to_update);
+        form_to_update.radio_groups[l] = radio_group_to_update;
     }
     for (int j = 0; j < form_to_update.buttons.size(); j++)
     {
@@ -1134,6 +1264,38 @@ checkbox get_checkbox_from_form(form form_to_search, string checkbox_name)
     return result;
 }
 
+radio_group get_radio_group_from_form(form form_to_search, string radio_group_name)
+{
+    radio_group result;
+
+    for (radio_group radio_group_to_search : form_to_search.radio_groups)
+    {
+        if (radio_group_to_search.name == radio_group_name)
+        {
+            result = radio_group_to_search;
+            break;
+        }
+    }
+
+    return result;
+}
+
+radio get_radio_from_group(radio_group radio_group_to_search, string radio_name)
+{
+    radio result;
+
+    for (radio radio_to_search : radio_group_to_search.radio_buttons)
+    {
+        if (radio_to_search.name == radio_name)
+        {
+            result = radio_to_search;
+            break;
+        }
+    }
+
+    return result;
+}
+
 button get_button_from_form(form form_to_search, string button_name)
 {
     button result;
@@ -1147,5 +1309,13 @@ button get_button_from_form(form form_to_search, string button_name)
         }
     }
 
+    return result;
+}
+
+string get_value_from_radio_group(radio_group group_to_check)
+{
+    int index = group_to_check.checked_radio;
+    radio value_radio = group_to_check.radio_buttons[index];
+    string result = value_radio.label;
     return result;
 }

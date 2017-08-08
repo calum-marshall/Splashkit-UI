@@ -23,6 +23,13 @@ struct input_area
     double height;
 };
 
+struct input_circle_area
+{
+    double position_x;
+    double position_y;
+    double radius;
+};
+
 struct input_font
 {
     font font_name;
@@ -79,10 +86,28 @@ struct checkbox
     bool checked;
 };
 
+struct radio
+{
+    string name;
+    string label;
+    input_circle_area area;
+    input_font style;
+    input_border border;
+    color background_color;
+};
+
+struct radio_group
+{
+    string name;
+    int checked_radio;
+    vector<radio> radio_buttons;
+};
+
 struct form
 {
     vector<textbox> textboxes;
     vector<checkbox> checkboxes;
+    vector<radio_group> radio_groups;
     vector<button> buttons;
     bool is_submitted;
 };
@@ -91,6 +116,9 @@ input_area new_input_area(double position_x, double position_y, double width, do
 input_area new_input_area(point_2d point, double width, double height);
 input_area new_input_area(double position_x, double position_y, point_2d point);
 input_area new_input_area(point_2d point, point_2d point_2);
+
+input_circle_area new_input_circle_area(double position_x, double position_y, double radius);
+input_circle_area new_input_circle_area(point_2d point, double radius);
 
 input_font new_input_font(string font_name, double font_size, color font_color);
 input_font new_input_font(string font_name, color font_color);
@@ -163,6 +191,21 @@ void draw_checkbox(checkbox checkbox_to_draw);
 void update_checkbox(checkbox &checkbox_to_update);
 void clear_checkbox(checkbox &checkbox_to_clear);
 
+radio new_radio(string name, string label, input_circle_area area, input_font style, input_border border, color background_color);
+radio new_radio(string name, string label, input_circle_area area, input_font style, input_border border);
+radio new_radio(string name, string label, input_circle_area area, input_font style, color background_color);
+radio new_radio(string name, string label, input_circle_area area, input_font style);
+
+void draw_radio(radio radio_to_draw, bool is_checked);
+bool radio_clicked(radio radio_to_check);
+
+radio_group new_radio_group(string name, int checked_radio, vector<radio> radio_buttons);
+radio_group new_radio_group(string name, vector<radio> radio_buttons);
+
+void draw_radio_group(radio_group group_to_draw);
+void update_radio_group(radio_group &group_to_update);
+void clear_radio_group(radio_group &group_to_clear);
+
 button new_button(string name, string text, input_area area, input_font style, input_border border, color background_color, form_action action);
 button new_button(string name, string text, input_area area, input_font style, color background_color, form_action action);
 button new_button(string name, string text, input_area area, input_font style, form_action action);
@@ -183,4 +226,8 @@ void clear_form(form &form_to_clear);
 
 textbox get_textbox_from_form(form form_to_search, string textbox_name);
 checkbox get_checkbox_from_form(form form_to_search, string checkbox_name);
+radio_group get_radio_group_from_form(form form_to_search, string radio_group_name);
+radio get_radio_from_group(radio_group radio_group_to_search, string radio_name);
 button get_button_from_form(form form_to_search, string button_name);
+
+string get_value_from_radio_group(radio_group group_to_check);
