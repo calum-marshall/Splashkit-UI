@@ -69,6 +69,16 @@ int main()
         draw_text(message, text_color, "Alice", 30, screen_width() / 2 - text_width(message, "Alice", 30) / 2, 20);
 
         refresh_screen();
+
+        if (message == "Correct!")
+        {
+            delay(3000);
+            the_number = rnd(100);
+            message = "I have a number. What is it?";
+            text_color = COLOR_BLACK;
+            clear_form(frm);
+            refresh_screen();
+        }
     }
 
     return 0;
