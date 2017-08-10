@@ -15,13 +15,7 @@ int main()
     input_area button_area = new_input_area(200, 140, 200, 40);
     input_border button_border = new_input_border(2);
     button btn = new_button("submit_button", "Guess", button_area, guess_style, button_border, SUBMIT);
-
-    input_circle_area radio_area = new_input_circle_area(30, 220, 10);
-    input_border radio_border = new_input_border(COLOR_BLACK, 2, COLOR_BLACK);
-    radio rd = new_radio("radio_1", "Radio 1", radio_area, guess_style, radio_border, COLOR_LIGHT_GRAY);
-    input_circle_area radio_area_2 = new_input_circle_area(30, 260, 10);
-    radio rd_2 = new_radio("radio_2", "Radio 2", radio_area_2, guess_style, radio_border, COLOR_LIGHT_GRAY);
-    
+        
     frm.textboxes.push_back(guess_textbox);
     frm.buttons.push_back(btn);
 
