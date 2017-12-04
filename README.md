@@ -1,4 +1,4 @@
-# Splashkit-UI
+# SplashKit-UI
 
 Created by Calum Marshall.
 
